@@ -1,0 +1,41 @@
+# Node
+node_modules/
+.env
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite
+/dist
+
+# Mac
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Logs
+logs
+*.log
+
+# Build output
+frontend/dist/
+backend/dist/
+
+# Misc
+*.local
+*.cache
+
+# OS
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+
+# Test coverage
+coverage/
+
+# Optional: ignore local ollama models
+ollama/

@@ -5,40 +5,36 @@ const axios = require('axios');
 
 // LLM connector with plug-and-play support
 const llmConnector = async (userText) => {
-  // Use environment variables or config for LLM provider
-  const llmUrl = process.env.LLM_URL || 'http://localhost:11434/api/generate';
-  const llmModel = process.env.LLM_MODEL || 'llama3';
-  const llmProvider = process.env.LLM_PROVIDER || 'ollama';
+  const llmUrl = process.env.LLM_URL || 'https://router.huggingface.co/fireworks-ai/inference/v1/chat/completions';
+  const llmProvider = process.env.LLM_PROVIDER || 'huggingface';
+  const hfToken = process.env.HF_TOKEN; // Hugging Face API token
 
-  let payload;
-  if (llmProvider === 'ollama') {
-    payload = {
-      model: llmModel,
-      prompt: `Rewrite this as a senior technical engineer prompt: ${userText}`,
-      stream: false
-    };
-  } else if (llmProvider === 'chatgpt') {
-    payload = {
-      prompt: `Rewrite this as a senior technical engineer prompt: ${userText}`,
-      // Add other ChatGPT-specific params here
-    };
-  } else {
-    payload = { prompt: userText };
-  }
+  const payload = {
+    messages: [
+      {
+        role: 'user',
+        content: `Rewrite this as a senior technical engineer prompt: ${userText}`
+      }
+    ],
+    model: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
+    stream: false
+  };
+
+  const headers = hfToken
+    ? { Authorization: `Bearer ${hfToken}` }
+    : {};
 
   try {
-    const response = await axios.post(llmUrl, payload);
-    // Adjust response parsing based on provider
-    if (llmProvider === 'ollama') {
-      return response.data.response || 'No response from LLM.';
-    } else if (llmProvider === 'chatgpt') {
-      return response.data.choices?.[0]?.text || response.data.result || 'No response from LLM.';
+    const response = await axios.post(llmUrl, payload, { headers });
+    // Fireworks/HuggingFace returns { choices: [{ message: { content: ... } }] }
+    if (response.data.choices && response.data.choices[0]?.message?.content) {
+      return response.data.choices[0].message.content;
     } else {
-      return response.data.result || 'No response from LLM.';
+      return JSON.stringify(response.data);
     }
   } catch (err) {
     console.error('LLM API error:', err.message);
-    return 'Error: Unable to connect to LLM.';
+    return 'Error: Unable to connect to Hugging Face LLM.';
   }
 };
 
