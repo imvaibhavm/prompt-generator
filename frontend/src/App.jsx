@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
-import ironManHeart from './assets/ironman-heart.svg'; // Placeholder, add your SVG to assets
+import ironManHeart from './assets/ironman-heart.svg';
+
+// Set API base URL from environment variable or fallback to relative path
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 function App() {
   const [input, setInput] = useState('');
@@ -11,7 +14,7 @@ function App() {
     setLoading(true);
     setOutput('');
     try {
-      const res = await fetch('/api/generate', {
+      const res = await fetch(`${API_BASE_URL}/api/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: input })
