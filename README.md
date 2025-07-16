@@ -1,4 +1,4 @@
-# Prompt Generator
+# Prompt Generator -Friday
 
 Friday - Prompt Generator is a plug-and-play prompt engineering tool with a React/Vite frontend and a Node.js/Express backend. The backend can connect to any LLM (like Ollama, ChatGPT, etc.) via configurable environment variables.
 
